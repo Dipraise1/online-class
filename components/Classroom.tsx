@@ -14,6 +14,7 @@ import {
   useLocalParticipant,
   useDataChannel,
 } from "@livekit/components-react";
+import QuizLayer from "@/components/QuizLayer";
 
 type Role = "host" | "student";
 
@@ -280,10 +281,13 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
         ))}
       </aside>
 
+      {/* live quizzes & polls (host launcher + results, student answer modal) */}
+      <QuizLayer sessionId={sessionId} isTeacher={isTeacher} />
+
       {/* student attendance pop-up */}
       {!isTeacher && attendanceModal && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/60 p-4">
-          <div className="card max-w-sm p-6 text-center">
+          <div className="card max-w-sm p-6 text-center text-ink">
             <p className="eyebrow">Attendance</p>
             <h3 className="mt-2 font-display text-2xl font-semibold">Your lecturer is taking attendance</h3>
             <p className="mt-2 text-sm text-ink-soft">Tap below to be marked present for this class.</p>

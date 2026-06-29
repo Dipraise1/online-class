@@ -31,6 +31,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
         },
       },
       enrollments: { where: { studentId: user.id } },
+      quizzes: { include: { _count: { select: { questions: true } } }, orderBy: { createdAt: "desc" } },
     },
   });
   if (!course) notFound();
@@ -227,6 +228,29 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
             )}
           </section>
         </div>
+
+        {/* Quizzes & polls (lecturer prepares ahead; starts them live in class) */}
+        {isOwner && (
+          <section className="mt-8 border-t border-line pt-8">
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <h2 className="eyebrow">Quizzes &amp; polls</h2>
+              <Link href={`/courses/${course.id}/quiz/new`} className="btn btn-gold px-3 py-1.5 text-sm">+ New quiz / poll</Link>
+            </div>
+            {course.quizzes.length === 0 ? (
+              <Empty>None yet — prepare a quiz or poll, then start it live during class.</Empty>
+            ) : (
+              <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {course.quizzes.map((q) => (
+                  <li key={q.id} className="card p-4">
+                    <span className="chip status-upcoming">{q.kind === "QUIZ" ? "Quiz" : "Poll"}</span>
+                    <p className="mt-2 font-display text-lg font-semibold leading-tight">{q.title}</p>
+                    <p className="mt-1 text-xs text-ink-soft">{q._count.questions} question{q._count.questions === 1 ? "" : "s"} · start it from the live class</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        )}
       </main>
     </>
   );

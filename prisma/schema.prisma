@@ -25,6 +25,7 @@ model User {
   enrollments   Enrollment[]
   attendances   Attendance[]
   sessionAccess SessionAccess[]
+  quizResponses QuizResponse[]
 }
 
 model Course {
@@ -39,6 +40,7 @@ model Course {
   enrollments Enrollment[]
   materials   Material[]
   sessions    ClassSession[]
+  quizzes     Quiz[]
 }
 
 model Enrollment {
@@ -102,4 +104,48 @@ model Attendance {
   student   User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
 
   @@unique([sessionId, studentId])
+}
+
+model Quiz {
+  id         String         @id @default(cuid())
+  courseId   String
+  lecturerId String
+  title      String
+  kind       String         @default("POLL") // "POLL" | "QUIZ"
+  createdAt  DateTime       @default(now())
+  course     Course         @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  questions  QuizQuestion[]
+}
+
+model QuizQuestion {
+  id        String         @id @default(cuid())
+  quizId    String
+  text      String
+  order     Int            @default(0)
+  quiz      Quiz           @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  options   QuizOption[]
+  responses QuizResponse[]
+}
+
+model QuizOption {
+  id         String         @id @default(cuid())
+  questionId String
+  text       String
+  isCorrect  Boolean        @default(false)
+  order      Int            @default(0)
+  question   QuizQuestion   @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  responses  QuizResponse[]
+}
+
+model QuizResponse {
+  id         String       @id @default(cuid())
+  questionId String
+  optionId   String
+  studentId  String
+  createdAt  DateTime     @default(now())
+  question   QuizQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  option     QuizOption   @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  student    User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, studentId])
 }
