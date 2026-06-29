@@ -23,8 +23,8 @@ async function upsertUser(email, data) {
 }
 
 const lecturer = await upsertUser("lecturer@uniabuja.edu.ng", { name: "Dr. Amina Bello", role: "LECTURER" });
-const student = await upsertUser("student@uniabuja.edu.ng", { name: "John Okafor", role: "STUDENT", matric: "[redacted]" });
-const divine = await upsertUser("divine@uniabuja.edu.ng", { name: "Divine Evna Olong", role: "STUDENT", matric: "[redacted]" });
+const student = await upsertUser("student@uniabuja.edu.ng", { name: "John Okafor", role: "STUDENT", matric: "24/0000CSC/001" });
+const divine = await upsertUser("divine@uniabuja.edu.ng", { name: "Divine Evna Olong", role: "STUDENT", matric: "24/0000CSC/002" });
 
 let course = await prisma.course.findFirst({ where: { code: "CSC 208", lecturerId: lecturer.id } });
 if (!course) {

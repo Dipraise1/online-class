@@ -5,7 +5,7 @@ University of Abuja
 1. Document Information
     •    Product Name: Online Class & Lecture Delivery Platform (OCLD) for University of Abuja
     •    Version: 1.0 (Draft)
-    •    Author: Divine Evna Olong (Matric No: [redacted])
+    •    Author: Divine Evna Olong
     •    Date: June 2026
     •    Status: Draft – Open for Stakeholder Review
 

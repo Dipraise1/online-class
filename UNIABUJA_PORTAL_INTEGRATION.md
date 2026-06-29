@@ -19,7 +19,7 @@ handling students' portal passwords). The proper path is an **official integrati
 ## Details to include in the request
 
 - **Project:** "Online Class" — a lecture‑delivery platform for UniAbuja (live classes,
-  materials, attendance). Built by Divine Evna Olong ([redacted]).
+  materials, attendance). Built by Divine Evna Olong.
 - **Purpose:** confirm that a person signing up is a genuine, currently‑enrolled student.
 - **Data needed:** matric number + name + department/level + enrolment status. **No grades,
   no financials, no passwords.**

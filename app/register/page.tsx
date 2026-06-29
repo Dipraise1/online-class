@@ -42,7 +42,7 @@ export default async function RegisterPage({
             </div>
             <div>
               <label className="label" htmlFor="matric">Matric number <span className="font-normal text-ink-soft/70">(students)</span></label>
-              <input id="matric" name="matric" className="field font-mono" placeholder="[redacted]" />
+              <input id="matric" name="matric" className="field font-mono" placeholder="e.g. 22/1234CSC/567" />
             </div>
             <div>
               <label className="label" htmlFor="password">Password</label>

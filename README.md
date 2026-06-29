@@ -1,10 +1,13 @@
 # Online Class — University of Abuja
 
-A live‑video lecture platform for the University of Abuja. Lecturers run **live classes**
-(screen‑share, camera, host moderation), publish **materials**, set the **schedule**,
-and take **attendance** — students join, learn, raise their hand, and get marked present.
+**Live demo → https://online-class-eosin.vercel.app**
 
-Built by **Divine Evna Olong** ([redacted]).
+A live‑video lecture platform for the University of Abuja (and any campus). Lecturers run
+**live classes** (screen‑share, camera, host moderation), publish **materials**, set the
+**schedule**, and take **attendance** — students join, learn, raise their hand, and get
+marked present.
+
+Built by **Divine Evna Olong**.
 
 ## Features
 
