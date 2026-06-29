@@ -26,38 +26,30 @@ export default async function Home() {
     <>
       <Nav />
       <main className="flex-1">
-        {/* hero */}
-        <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 py-12 sm:py-16 lg:grid-cols-[1.1fr_0.9fr] lg:gap-8 lg:py-24">
-          <div className="text-center lg:text-left">
-            <span className="eyebrow reveal inline-flex items-center gap-2" style={{ animationDelay: "0ms" }}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/uniabuja-crest.png" alt="" className="h-6 w-auto" />
-              University of Abuja
-            </span>
-            <h1 className="reveal mt-4 font-display text-[2.6rem] font-semibold leading-[1.02] tracking-tight sm:text-6xl lg:text-7xl" style={{ animationDelay: "80ms" }}>
-              Your lectures,
-              <br className="hidden sm:block" /> <span className="italic text-pine">live</span> and in one place.
-            </h1>
-            <p className="reveal mx-auto mt-5 max-w-md text-base text-ink-soft sm:text-lg lg:mx-0" style={{ animationDelay: "160ms" }}>
-              Online Class turns every lecture into a live video room — with attendance,
-              materials, and quizzes built in. Light enough to work on any network.
-            </p>
-            <div className="reveal mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center lg:justify-start" style={{ animationDelay: "240ms" }}>
-              <Link href="/register" className="btn btn-primary px-6 py-3 text-base">Get started — free</Link>
-              <Link href="/login" className="btn btn-outline px-6 py-3 text-base">Log in</Link>
-            </div>
-            <div className="reveal mt-6 flex flex-wrap justify-center gap-x-5 gap-y-1 text-xs text-ink-soft lg:justify-start" style={{ animationDelay: "300ms" }}>
-              <span>No app to install</span>
-              <span aria-hidden>·</span>
-              <span>Works on phones</span>
-              <span aria-hidden>·</span>
-              <span>Free to start</span>
-            </div>
+        {/* hero — text only */}
+        <section className="mx-auto max-w-3xl px-5 py-20 text-center sm:py-28 lg:py-36">
+          <span className="eyebrow reveal inline-flex items-center gap-2" style={{ animationDelay: "0ms" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/uniabuja-crest.png" alt="" className="h-6 w-auto" />
+            University of Abuja
+          </span>
+          <h1 className="reveal mt-5 font-display text-[2.9rem] font-semibold leading-[1.02] tracking-tight sm:text-7xl lg:text-8xl" style={{ animationDelay: "80ms" }}>
+            Your lectures, <span className="italic text-pine">live</span> and in one place.
+          </h1>
+          <p className="reveal mx-auto mt-6 max-w-xl text-base text-ink-soft sm:text-lg" style={{ animationDelay: "160ms" }}>
+            Online Class turns every lecture into a live video room — with attendance,
+            materials, and quizzes built in. Light enough to work on any network.
+          </p>
+          <div className="reveal mt-9 flex flex-col justify-center gap-3 sm:flex-row" style={{ animationDelay: "240ms" }}>
+            <Link href="/register" className="btn btn-primary px-6 py-3 text-base">Get started — free</Link>
+            <Link href="/login" className="btn btn-outline px-6 py-3 text-base">Log in</Link>
           </div>
-
-          {/* product mock */}
-          <div className="reveal" style={{ animationDelay: "320ms" }}>
-            <ClassMock />
+          <div className="reveal mt-6 flex flex-wrap justify-center gap-x-5 gap-y-1 text-xs text-ink-soft" style={{ animationDelay: "300ms" }}>
+            <span>No app to install</span>
+            <span aria-hidden>·</span>
+            <span>Works on phones</span>
+            <span aria-hidden>·</span>
+            <span>Free to start</span>
           </div>
         </section>
 
@@ -151,42 +143,5 @@ export default async function Home() {
         </div>
       </footer>
     </>
-  );
-}
-
-function ClassMock() {
-  return (
-    <div className="card mx-auto max-w-md overflow-hidden p-3 sm:p-4">
-      <div className="flex items-center justify-between px-1 pb-2">
-        <span className="font-mono text-xs text-ink-soft">CSC 208 · Live</span>
-        <span className="chip status-open">On air</span>
-      </div>
-      {/* stage */}
-      <div className="relative aspect-video overflow-hidden rounded-xl bg-gradient-to-br from-pine-700 to-pine-900">
-        <span className="absolute left-3 top-3 rounded-full bg-gold px-2.5 py-1 text-[0.65rem] font-semibold text-pine-900">Sharing screen</span>
-        <div className="absolute bottom-3 right-3 flex gap-1.5">
-          {["A", "J", "D"].map((c) => (
-            <span key={c} className="grid h-9 w-9 place-items-center rounded-lg bg-pine-900/80 text-xs font-semibold text-paper ring-1 ring-white/10">{c}</span>
-          ))}
-        </div>
-      </div>
-      {/* controls */}
-      <div className="mt-2 flex flex-wrap gap-1.5">
-        {["Mic", "Camera", "Share", "Mute all", "Quiz"].map((c) => (
-          <span key={c} className="rounded-lg bg-paper-2 px-2.5 py-1.5 text-[0.7rem] font-medium text-ink">{c}</span>
-        ))}
-      </div>
-      {/* live bits */}
-      <div className="mt-3 grid grid-cols-2 gap-2">
-        <div className="rounded-xl bg-paper-2 p-3 text-xs">
-          <p className="eyebrow text-[0.55rem]">Attendance</p>
-          <p className="mt-1 font-display text-lg font-semibold text-pine">42 / 45</p>
-        </div>
-        <div className="rounded-xl bg-paper-2 p-3 text-xs">
-          <p className="eyebrow text-[0.55rem]">Hands up</p>
-          <p className="mt-1 font-display text-lg font-semibold text-gold">3</p>
-        </div>
-      </div>
-    </div>
   );
 }
