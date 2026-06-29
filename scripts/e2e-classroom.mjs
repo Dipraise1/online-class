@@ -55,6 +55,12 @@ ok(await sp.getByText(/Raise hand/).first().isVisible().catch(() => false), "stu
 // both connected — teacher should see 1 student
 await tp.waitForTimeout(2000);
 ok((await tp.content()).includes("1 student"), "teacher sees 1 student in the room");
+ok((await tp.content()).includes(student.matric), `teacher roster shows student matric (${student.matric})`);
+
+// CSV export of attendance (matric list) — lecturer only
+const csv = await tctx.request.get(`${BASE}/api/attendance/export?session=${live.id}`);
+const csvText = await csv.text();
+ok(csv.ok() && csvText.includes("Matric") && csvText.includes(student.matric), "lecturer can export attendance CSV with matric");
 
 // student raises hand → teacher sees it
 await sp.getByText("✋ Raise hand").first().click();
@@ -70,6 +76,15 @@ await sp.waitForTimeout(6000);
 ok(await sp.getByText(/marked present/).first().isVisible().catch(() => false), "student sees 'marked present' confirmation");
 await tp.waitForTimeout(3000);
 ok((await tp.content()).includes("1/1") || (await tp.content()).includes("Stop attendance · 1"), "teacher attendance count updates to 1");
+
+// abc proctor: simulate the student leaving the class screen (tab hidden)
+await sp.evaluate(() => {
+  Object.defineProperty(document, "hidden", { configurable: true, get: () => true });
+  document.dispatchEvent(new Event("visibilitychange"));
+});
+await tp.waitForTimeout(3000);
+ok((await tp.content()).includes("away from screen") || (await tp.content()).includes("👀 away"),
+  "abc: teacher sees student left the screen");
 
 await tp.screenshot({ path: "/tmp/oc-shots/classroom-teacher.png" });
 await sp.screenshot({ path: "/tmp/oc-shots/classroom-student.png" });

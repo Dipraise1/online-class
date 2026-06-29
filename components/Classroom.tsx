@@ -1,7 +1,7 @@
 "use client";
 
 import "@livekit/components-styles";
-import { useEffect, useMemo, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Track, type Participant } from "livekit-client";
 import type { TrackReference, TrackReferenceOrPlaceholder } from "@livekit/components-core";
@@ -17,12 +17,58 @@ import {
 
 type Role = "host" | "student";
 
-function isHost(p: { metadata?: string }) {
+function meta(p: { metadata?: string }): { role?: string; matric?: string } {
   try {
-    return p.metadata ? JSON.parse(p.metadata).role === "host" : false;
+    return p.metadata ? JSON.parse(p.metadata) : {};
   } catch {
-    return false;
+    return {};
   }
+}
+function isHost(p: { metadata?: string }) {
+  return meta(p).role === "host";
+}
+
+// "abc" feature: integrity signals — flags a student who is on multiple screens
+// or who leaves the class screen (switches tab / loses focus). Published as
+// LiveKit attributes so the lecturer sees it live.
+function useAbcProctor(
+  enabled: boolean,
+  lp: { attributes?: Record<string, string>; setAttributes: (a: Record<string, string>) => Promise<void> }
+) {
+  const leaves = useRef(0);
+  useEffect(() => {
+    if (!enabled) return;
+    const patch = (partial: Record<string, string>) =>
+      lp.setAttributes({ ...(lp.attributes || {}), ...partial }).catch(() => {});
+    const checkScreens = () => {
+      const ext = typeof window !== "undefined" && !!(window.screen as unknown as { isExtended?: boolean })?.isExtended;
+      patch({ screens: ext ? "multi" : "single" });
+    };
+    const onVis = () => {
+      if (document.hidden) {
+        leaves.current += 1;
+        patch({ away: "1", leaves: String(leaves.current) });
+      } else patch({ away: "" });
+    };
+    const onBlur = () => patch({ away: "1" });
+    const onFocus = () => patch({ away: "" });
+
+    checkScreens();
+    patch({ away: "", leaves: "0" });
+    document.addEventListener("visibilitychange", onVis);
+    window.addEventListener("blur", onBlur);
+    window.addEventListener("focus", onFocus);
+    const screenObj = window.screen as unknown as { addEventListener?: (e: string, c: () => void) => void; removeEventListener?: (e: string, c: () => void) => void };
+    screenObj.addEventListener?.("change", checkScreens);
+    const iv = setInterval(checkScreens, 10000);
+    return () => {
+      document.removeEventListener("visibilitychange", onVis);
+      window.removeEventListener("blur", onBlur);
+      window.removeEventListener("focus", onFocus);
+      screenObj.removeEventListener?.("change", checkScreens);
+      clearInterval(iv);
+    };
+  }, [enabled, lp]);
 }
 
 export default function Classroom({
@@ -74,6 +120,7 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
   const isTeacher = role === "host";
   const { localParticipant } = useLocalParticipant();
   const participants = useParticipants();
+  useAbcProctor(!isTeacher, localParticipant);
 
   const tracks = useTracks(
     [
@@ -129,6 +176,8 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
   const raisedHands = participants.filter((p) => !isHost(p) && p.attributes?.hand === "1");
   const presentCount = participants.filter((p) => !isHost(p) && p.attributes?.present === "1").length;
   const studentCount = participants.filter((p) => !isHost(p)).length;
+  const multiScreen = participants.filter((p) => !isHost(p) && p.attributes?.screens === "multi");
+  const awayStudents = participants.filter((p) => !isHost(p) && p.attributes?.away === "1");
 
   const muteOne = (identity: string) =>
     fetch("/api/livekit/mute", {
@@ -212,12 +261,20 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
             ✋ {raisedHands.map((p) => p.name || "Student").join(", ")}
           </div>
         )}
+        {isTeacher && (multiScreen.length > 0 || awayStudents.length > 0) && (
+          <div className="rounded-lg bg-rust/15 p-2 text-xs text-rust">
+            ⚠ Integrity
+            {multiScreen.length > 0 && <div>🖥 {multiScreen.length} on multiple screens</div>}
+            {awayStudents.length > 0 && <div>👀 {awayStudents.length} away from screen</div>}
+          </div>
+        )}
         {participants.map((p) => (
           <PersonTile
             key={p.identity}
             p={p}
             camTrack={cameras.find((t) => t.participant.identity === p.identity)}
             canMute={isTeacher && !isHost(p)}
+            showDetails={isTeacher && !isHost(p)}
             onMute={() => muteOne(p.identity)}
           />
         ))}
@@ -243,16 +300,21 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
 }
 
 function PersonTile({
-  p, camTrack, canMute, onMute,
+  p, camTrack, canMute, showDetails, onMute,
 }: {
   p: Participant;
   camTrack?: TrackReferenceOrPlaceholder;
   canMute: boolean;
+  showDetails?: boolean;
   onMute: () => void;
 }) {
   const host = isHost(p);
+  const matric = meta(p).matric;
+  const multi = p.attributes?.screens === "multi";
+  const away = p.attributes?.away === "1";
+  const leaves = Number(p.attributes?.leaves || "0");
   return (
-    <div className="relative overflow-hidden rounded-lg bg-black/40">
+    <div className={`relative overflow-hidden rounded-lg bg-black/40 ${away ? "ring-1 ring-rust/60" : ""}`}>
       <div className="aspect-video">
         {camTrack?.publication ? (
           <VideoTrack trackRef={camTrack as TrackReference} className="h-full w-full object-cover" />
@@ -274,6 +336,14 @@ function PersonTile({
           <button onClick={onMute} className="rounded bg-white/10 px-1.5 py-0.5 hover:bg-white/20">mute</button>
         )}
       </div>
+      {showDetails && (
+        <div className="flex flex-wrap items-center gap-1 px-2 pb-1.5 text-[0.62rem]">
+          {matric && <span className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-paper/80">{matric}</span>}
+          {multi && <span className="rounded bg-rust/25 px-1.5 py-0.5 text-paper">🖥 multi-screen</span>}
+          {away && <span className="rounded bg-rust/25 px-1.5 py-0.5 text-paper">👀 away</span>}
+          {leaves > 0 && <span className="rounded bg-white/10 px-1.5 py-0.5 text-paper/70">left {leaves}×</span>}
+        </div>
+      )}
     </div>
   );
 }

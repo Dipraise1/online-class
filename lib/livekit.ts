@@ -18,11 +18,12 @@ export async function createAccessToken(opts: {
   name: string;
   room: string;
   role: "host" | "student";
+  matric?: string | null;
 }) {
   const at = new AccessToken(API_KEY, API_SECRET, {
     identity: opts.identity,
     name: opts.name,
-    metadata: JSON.stringify({ role: opts.role }),
+    metadata: JSON.stringify({ role: opts.role, matric: opts.matric || "" }),
   });
   at.addGrant({
     roomJoin: true,

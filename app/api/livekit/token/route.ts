@@ -22,11 +22,13 @@ export async function GET(req: Request) {
   if (!isOwner && !isEnrolled) return Response.json({ error: "forbidden" }, { status: 403 });
 
   const role = isOwner ? "host" : "student";
+  const me = await prisma.user.findUnique({ where: { id: user.id }, select: { matric: true } });
   const token = await createAccessToken({
     identity: user.id,
     name: user.name,
     room: roomNameFor(session.id),
     role,
+    matric: me?.matric,
   });
 
   return Response.json({ token, url: LIVEKIT_WS_URL, role, identity: user.id });

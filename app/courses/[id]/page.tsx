@@ -159,12 +159,23 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                               </button>
                             </form>
                           )}
-                          <p className="eyebrow mb-2 text-[0.6rem]">Roll · {s.attendances.length} present</p>
+                          <div className="mb-2 flex items-center justify-between gap-2">
+                            <p className="eyebrow text-[0.6rem]">Roll · {s.attendances.length} present</p>
+                            {s.attendances.length > 0 && (
+                              <a
+                                href={`/api/attendance/export?session=${s.id}`}
+                                className="text-[0.7rem] font-medium text-pine underline-offset-2 hover:underline"
+                              >
+                                ⬇ Matric list (CSV)
+                              </a>
+                            )}
+                          </div>
                           {s.attendances.length > 0 ? (
                             <ul className="flex flex-wrap gap-1.5">
                               {s.attendances.map((a) => (
                                 <li key={a.id} className="chip status-open">
-                                  {a.student.name}{a.status === "LATE" ? " · late" : ""}
+                                  {a.student.matric ? <span className="font-mono">{a.student.matric}</span> : a.student.name}
+                                  {a.status === "LATE" ? " · late" : ""}
                                 </li>
                               ))}
                             </ul>
