@@ -1,0 +1,13 @@
+#!/usr/bin/expect -f
+set timeout 60
+cd /Users/divine/Documents/online-class
+spawn vercel blob create-store online-class-blob --access public
+expect {
+  "already exists" { puts "\nEXISTS"; exit 2 }
+  "link this blob store" { send "y\r" }
+}
+expect {
+  "Select environments" { send "\r" }
+  timeout { exit 3 }
+}
+expect eof

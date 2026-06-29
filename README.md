@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Online Class — University of Abuja
 
-## Getting Started
+A live‑video lecture platform for the University of Abuja. Lecturers run **live classes**
+(screen‑share, camera, host moderation), publish **materials**, set the **schedule**,
+and take **attendance** — students join, learn, raise their hand, and get marked present.
 
-First, run the development server:
+Built by **Divine Evna Olong** ([redacted]).
+
+## Features
+
+- **Live classroom** (LiveKit) — teacher shares screen / opens a doc with camera on; students
+  join muted; the host can **mute anyone / mute all**; students **raise their hand** on the
+  call; the host **passes attendance** as a pop‑up students toggle, with a live present count.
+- **"Class hasn't started" gate** — students wait on a branded screen and auto‑join the moment
+  the lecturer goes live.
+- **Materials** — lecturers upload documents (stored on Vercel Blob); students download anytime.
+- **Schedule** — class sessions with start/end times and online/physical mode.
+- **Attendance** — joining a live class auto‑marks present; lecturers see the roll in real time.
+- **Roles & auth** — lecturer / student accounts (bcrypt + JWT cookie).
+
+## Stack
+
+Next.js 16 (App Router) · TypeScript · Tailwind v4 · Prisma + Postgres (Neon) ·
+Vercel Blob · LiveKit · deployed on Vercel.
+
+## Local development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+cp .env.example .env          # fill in DATABASE_URL, AUTH_SECRET, etc.
+npx prisma db push            # create the schema
+npm run seed                  # optional demo data
+
+# in a second terminal, for live video:
+livekit-server --dev          # ws://127.0.0.1:7880 (devkey/secret)
+
+npm run dev                   # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Deployment
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+See [DEPLOY.md](./DEPLOY.md). Production uses Neon Postgres, Vercel Blob, and LiveKit Cloud —
+all configured via Vercel environment variables (never committed).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project structure
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `app/` — routes (landing, auth, dashboard, courses, live classroom, API routes)
+- `components/` — `Classroom` (LiveKit UI), `Nav`, `AutoRefresh`
+- `lib/` — `auth`, `prisma`, `livekit`, `storage`, server actions
+- `prisma/schema.prisma` — data model
+- `scripts/` — seeding and end‑to‑end test scripts

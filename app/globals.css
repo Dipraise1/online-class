@@ -1,26 +1,176 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* palette — warm paper & pine ink with marigold accent */
+  --color-paper: #f5f1e6;
+  --color-paper-2: #efe9da;
+  --color-raised: #fdfbf5;
+  --color-ink: #16241d;
+  --color-ink-soft: #51605a;
+  --color-pine: #14604a;
+  --color-pine-700: #0e4636;
+  --color-pine-900: #0a3127;
+  --color-gold: #d59a32;
+  --color-gold-soft: #f0d9a4;
+  --color-line: #e0d8c4;
+  --color-line-2: #cec4a9;
+  --color-rust: #b5512f;
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-display);
+  --font-mono: var(--font-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --background: var(--color-paper);
+  --foreground: var(--color-ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  /* layered atmosphere: faint dotted grid + warm radial glows + grain */
+  background-image:
+    radial-gradient(circle at 12% 8%, rgba(20, 96, 74, 0.06), transparent 42%),
+    radial-gradient(circle at 88% 0%, rgba(213, 154, 50, 0.08), transparent 38%),
+    radial-gradient(rgba(22, 36, 29, 0.05) 1px, transparent 1px);
+  background-size: auto, auto, 22px 22px;
+  background-attachment: fixed;
+}
+
+/* fine grain overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.045'/%3E%3C/svg%3E");
+}
+
+body > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------- typography ---------- */
+.font-display {
+  font-family: var(--font-display), Georgia, serif;
+  font-optical-sizing: auto;
+}
+.eyebrow {
+  font-family: var(--font-mono), monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-size: 0.68rem;
+  color: var(--color-ink-soft);
+}
+
+/* ---------- components ---------- */
+.card {
+  background-color: var(--color-raised);
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 14px 34px -22px rgba(22, 36, 29, 0.45);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.7rem;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 0.6rem 1.15rem;
+  transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  cursor: pointer;
+}
+.btn:active { transform: translateY(1px); }
+
+.btn-primary {
+  background-color: var(--color-pine);
+  color: #f7f4ea;
+  box-shadow: 0 10px 22px -12px rgba(14, 70, 54, 0.8);
+}
+.btn-primary:hover { background-color: var(--color-pine-700); }
+
+.btn-gold {
+  background-color: var(--color-gold);
+  color: var(--color-pine-900);
+  box-shadow: 0 10px 22px -12px rgba(213, 154, 50, 0.85);
+}
+.btn-gold:hover { filter: brightness(1.05); }
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-ink);
+  border: 1px solid var(--color-line-2);
+}
+.btn-outline:hover { background-color: var(--color-paper-2); }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.7rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.field {
+  width: 100%;
+  background-color: var(--color-raised);
+  border: 1px solid var(--color-line-2);
+  border-radius: 0.65rem;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  color: var(--color-ink);
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field:focus {
+  border-color: var(--color-pine);
+  box-shadow: 0 0 0 3px rgba(20, 96, 74, 0.14);
+}
+.field::placeholder { color: #a39c87; }
+
+.label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  margin-bottom: 0.3rem;
+}
+
+/* status pills */
+.status-open { background: rgba(20, 96, 74, 0.13); color: var(--color-pine-700); }
+.status-upcoming { background: rgba(213, 154, 50, 0.18); color: #97651a; }
+.status-closed { background: rgba(22, 36, 29, 0.08); color: var(--color-ink-soft); }
+
+/* ledger rule — decorative dotted divider */
+.rule-dotted {
+  height: 1px;
+  background-image: linear-gradient(to right, var(--color-line-2) 50%, transparent 50%);
+  background-size: 7px 1px;
+  background-repeat: repeat-x;
+}
+
+/* entrance animation */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0;
+  animation: rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal { animation: none; opacity: 1; }
 }

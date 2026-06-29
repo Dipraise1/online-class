@@ -1,0 +1,5 @@
+CSC 101 — Introduction to Programming
+Lecture 1: Getting Started
+
+This is a demo material file for Online Class (University of Abuja).
+Lecturers upload real documents (PDF, slides, etc.) which are stored on Vercel Blob.
