@@ -21,9 +21,10 @@ model User {
   matric      String?
   createdAt   DateTime     @default(now())
 
-  courses     Course[]     @relation("LecturerCourses")
-  enrollments Enrollment[]
-  attendances Attendance[]
+  courses       Course[]        @relation("LecturerCourses")
+  enrollments   Enrollment[]
+  attendances   Attendance[]
+  sessionAccess SessionAccess[]
 }
 
 model Course {
@@ -71,10 +72,24 @@ model ClassSession {
   startedAt DateTime?    // set when the lecturer goes live
   mode      String       @default("PHYSICAL") // "PHYSICAL" | "ONLINE"
   location  String?      // room name or meeting link
+  shareId   String       @unique @default(cuid()) // students access only via this link
   course    Course       @relation(fields: [courseId], references: [id], onDelete: Cascade)
   createdAt DateTime     @default(now())
 
   attendances Attendance[]
+  access      SessionAccess[]
+}
+
+// A student "unlocks" a session by opening its share link.
+model SessionAccess {
+  id        String       @id @default(cuid())
+  sessionId String
+  studentId String
+  session   ClassSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student   User         @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+
+  @@unique([sessionId, studentId])
 }
 
 model Attendance {

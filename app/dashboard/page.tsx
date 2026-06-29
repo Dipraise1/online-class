@@ -25,7 +25,12 @@ export default async function Dashboard() {
 
   const courseIds = courses.map((c) => c.id);
   const upcoming = await prisma.classSession.findMany({
-    where: { courseId: { in: courseIds }, endsAt: { gte: new Date() } },
+    where: {
+      courseId: { in: courseIds },
+      endsAt: { gte: new Date() },
+      // students only see classes they've unlocked via an invite link
+      ...(isLecturer ? {} : { access: { some: { studentId: user.id } } }),
+    },
     include: { course: true },
     orderBy: { startsAt: "asc" },
     take: 5,

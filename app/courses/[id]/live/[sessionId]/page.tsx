@@ -19,13 +19,15 @@ export default async function LiveClassPage({
     where: { id: sessionId },
     include: {
       course: { include: { enrollments: { where: { studentId: user.id } } } },
+      access: { where: { studentId: user.id } },
     },
   });
   if (!session || session.courseId !== id) notFound();
 
   const isOwner = user.role === "LECTURER" && session.course.lecturerId === user.id;
-  const isEnrolled = session.course.enrollments.length > 0;
-  if (!isOwner && !isEnrolled) redirect(`/courses/${id}`);
+  const hasAccess = session.access.length > 0;
+  // Students must have unlocked this class via the lecturer's invite link.
+  if (!isOwner && !hasAccess) redirect(`/courses/${id}`);
 
   const win = sessionWindow(session.startsAt, session.endsAt);
   const backHref = `/courses/${id}`;

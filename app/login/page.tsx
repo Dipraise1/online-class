@@ -7,10 +7,10 @@ import Nav from "@/components/Nav";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
   if (await getSession()) redirect("/dashboard");
-  const { error } = await searchParams;
+  const { error, next } = await searchParams;
 
   return (
     <>
@@ -31,6 +31,7 @@ export default async function LoginPage({
             <p className="mb-4 rounded-lg border border-rust/30 bg-rust/10 px-3 py-2 text-sm text-rust">{error}</p>
           )}
           <form action={loginAction} className="space-y-4">
+            <input type="hidden" name="next" value={next ?? ""} />
             <div>
               <label className="label" htmlFor="email">Email</label>
               <input id="email" name="email" type="email" required className="field" placeholder="you@uniabuja.edu.ng" />

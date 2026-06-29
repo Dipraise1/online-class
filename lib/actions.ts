@@ -53,7 +53,8 @@ export async function registerAction(formData: FormData) {
   });
 
   await createSession({ id: user.id, name: user.name, role: user.role as "LECTURER" | "STUDENT" });
-  redirect("/dashboard");
+  const next = String(formData.get("next") || "");
+  redirect(next.startsWith("/") ? next : "/dashboard");
 }
 
 export async function loginAction(formData: FormData) {
@@ -66,7 +67,8 @@ export async function loginAction(formData: FormData) {
   }
 
   await createSession({ id: user!.id, name: user!.name, role: user!.role as "LECTURER" | "STUDENT" });
-  redirect("/dashboard");
+  const next = String(formData.get("next") || "");
+  redirect(next.startsWith("/") ? next : "/dashboard");
 }
 
 export async function logoutAction() {

@@ -13,13 +13,16 @@ async function retry(fn, n = 5) {
   }
 }
 
-const course = await retry(() => prisma.course.findUnique({
-  where: { id: "cmqzk6sul00031qeg3elgjvl8" },
+const course = await retry(() => prisma.course.findFirst({
+  where: { code: "CSC 101" },
   include: { sessions: true },
+  orderBy: { createdAt: "desc" },
 }));
 const live = course.sessions.find((s) => s.title.includes("join anytime"));
 const teacher = await prisma.user.findUnique({ where: { email: "teacher@test.com" } });
 const student = await prisma.user.findUnique({ where: { email: "student@test.com" } });
+// reset so the share-link gating check starts from a clean (locked) state
+await retry(() => prisma.sessionAccess.deleteMany({ where: { studentId: student.id } }));
 const tCookie = await mint(teacher);
 const sCookie = await mint(student);
 await prisma.$disconnect();
@@ -47,10 +50,17 @@ await tp.goto(URL, { waitUntil: "domcontentloaded" });
 await tp.waitForTimeout(11000);
 ok(await tp.getByText(/Share screen|Pass attendance/).first().isVisible().catch(() => false), "teacher sees host controls (share / attendance)");
 
-// student joins
+// share-link gating: without the invite link, the student can't enter the class
+await sp.goto(URL, { waitUntil: "domcontentloaded" });
+await sp.waitForTimeout(2000);
+ok(!sp.url().includes("/live/"), "student blocked from class until they open the invite link");
+
+// student unlocks via the lecturer's invite link, then joins
+await sp.goto(`${BASE}/join/${live.shareId}`, { waitUntil: "domcontentloaded" });
+await sp.waitForTimeout(2000);
 await sp.goto(URL, { waitUntil: "domcontentloaded" });
 await sp.waitForTimeout(13000);
-ok(await sp.getByText(/Raise hand/).first().isVisible().catch(() => false), "student sees Raise hand control");
+ok(await sp.getByText(/Raise hand/).first().isVisible().catch(() => false), "student sees Raise hand control after using link");
 
 // both connected — teacher should see 1 student
 await tp.waitForTimeout(2000);

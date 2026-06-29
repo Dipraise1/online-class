@@ -11,6 +11,7 @@ import {
   startLiveAction,
 } from "@/lib/actions";
 import Nav from "@/components/Nav";
+import CopyLink from "@/components/CopyLink";
 
 export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const user = await getSession();
@@ -24,7 +25,10 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
       materials: { orderBy: { createdAt: "desc" } },
       sessions: {
         orderBy: { startsAt: "asc" },
-        include: { attendances: { include: { student: true } } },
+        include: {
+          attendances: { include: { student: true } },
+          access: { where: { studentId: user.id } },
+        },
       },
       enrollments: { where: { studentId: user.id } },
     },
@@ -33,6 +37,8 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
   const isOwner = user.role === "LECTURER" && course.lecturerId === user.id;
   const isEnrolled = course.enrollments.length > 0;
+  // Students only see classes they've unlocked via the lecturer's invite link.
+  const sessions = isOwner ? course.sessions : course.sessions.filter((s) => s.access.length > 0);
 
   return (
     <>
@@ -129,11 +135,15 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
               </form>
             )}
 
-            {course.sessions.length === 0 ? (
-              <Empty>No classes scheduled yet.</Empty>
+            {sessions.length === 0 ? (
+              <Empty>
+                {isOwner
+                  ? "No classes scheduled yet."
+                  : "No classes yet — open a class link from your lecturer to join one."}
+              </Empty>
             ) : (
               <ul className="space-y-2.5">
-                {course.sessions.map((s) => {
+                {sessions.map((s) => {
                   const w = sessionWindow(s.startsAt, s.endsAt);
                   const mine = s.attendances.find((a) => a.studentId === user.id);
                   return (
@@ -151,6 +161,10 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
 
                       {isOwner && (
                         <div className="mt-3 border-t border-line pt-3">
+                          <div className="mb-3 flex flex-wrap items-center gap-2">
+                            <CopyLink path={`/join/${s.shareId}`} label="Copy invite link" />
+                            <span className="text-[0.7rem] text-ink-soft">Send this to students so they can join</span>
+                          </div>
                           {w === "open" && (
                             <form action={startLiveAction} className="mb-3">
                               <input type="hidden" name="sessionId" value={s.id} />
