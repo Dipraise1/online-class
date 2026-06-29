@@ -81,7 +81,7 @@ export default function QuizLayer({ sessionId, isTeacher }: { sessionId: string;
         </button>
 
         {open && !activeId && (
-          <div className="card fixed bottom-20 right-4 z-40 max-h-[60vh] w-80 overflow-y-auto p-4 text-ink">
+          <div className="card fixed bottom-20 right-4 z-40 max-h-[60vh] w-80 max-w-[calc(100vw-2rem)] overflow-y-auto p-4 text-ink">
             <div className="mb-2 flex items-center justify-between">
               <p className="eyebrow">Start a quiz / poll</p>
               <button onClick={() => setOpen(false)} className="text-ink-soft hover:text-ink">✕</button>
@@ -105,7 +105,7 @@ export default function QuizLayer({ sessionId, isTeacher }: { sessionId: string;
         )}
 
         {activeId && results && (
-          <div className="card fixed bottom-20 right-4 z-40 max-h-[70vh] w-96 overflow-y-auto p-4 text-ink">
+          <div className="card fixed bottom-20 right-4 z-40 max-h-[70vh] w-96 max-w-[calc(100vw-2rem)] overflow-y-auto p-4 text-ink">
             <div className="mb-2 flex items-center justify-between">
               <div>
                 <p className="font-display text-lg font-semibold leading-tight">{results.title}</p>
