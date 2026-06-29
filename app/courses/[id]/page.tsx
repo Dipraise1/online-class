@@ -154,7 +154,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                           <p className="font-display text-lg font-semibold leading-tight">{s.title}</p>
                           <p className="mt-1 text-xs text-ink-soft">{fmtDateTime(s.startsAt)} → {fmtDateTime(s.endsAt)}</p>
                           <p className="text-xs text-ink-soft">
-                            {s.mode === "ONLINE" ? "🖥 Online" : "📍 Physical"}{s.location ? ` · ${s.location}` : ""}
+                            {s.mode === "ONLINE" ? "Online" : "Physical"}{s.location ? ` · ${s.location}` : ""}
                           </p>
                         </div>
                         <Badge window={w} />
@@ -181,7 +181,7 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
                                 href={`/api/attendance/export?session=${s.id}`}
                                 className="text-[0.7rem] font-medium text-pine underline-offset-2 hover:underline"
                               >
-                                ⬇ Matric list (CSV)
+                                Matric list (CSV)
                               </a>
                             )}
                           </div>

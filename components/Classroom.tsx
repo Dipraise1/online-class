@@ -219,29 +219,29 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
         <div className="mt-3 flex flex-wrap items-center gap-2 rounded-xl bg-pine-900/60 p-2">
           <Ctrl onClick={() => localParticipant.setMicrophoneEnabled(!localParticipant.isMicrophoneEnabled)}
             active={localParticipant.isMicrophoneEnabled}>
-            {localParticipant.isMicrophoneEnabled ? "🎙 Mic on" : "🔇 Mic off"}
+            {localParticipant.isMicrophoneEnabled ? "Mic on" : "Mic off"}
           </Ctrl>
           <Ctrl onClick={() => localParticipant.setCameraEnabled(!localParticipant.isCameraEnabled)}
             active={localParticipant.isCameraEnabled}>
-            {localParticipant.isCameraEnabled ? "📹 Cam on" : "📷 Cam off"}
+            {localParticipant.isCameraEnabled ? "Cam on" : "Cam off"}
           </Ctrl>
 
           {isTeacher ? (
             <>
               <Ctrl onClick={() => localParticipant.setScreenShareEnabled(!localParticipant.isScreenShareEnabled)}
                 active={localParticipant.isScreenShareEnabled}>
-                🖥 {localParticipant.isScreenShareEnabled ? "Stop share" : "Share screen / doc"}
+                {localParticipant.isScreenShareEnabled ? "Stop share" : "Share screen / doc"}
               </Ctrl>
-              <Ctrl onClick={muteAll}>🔇 Mute all</Ctrl>
+              <Ctrl onClick={muteAll}>Mute all</Ctrl>
               {attendanceLiveHost ? (
-                <Ctrl onClick={stopAttendance} active>📋 Stop attendance · {presentCount}/{studentCount}</Ctrl>
+                <Ctrl onClick={stopAttendance} active>Stop attendance · {presentCount}/{studentCount}</Ctrl>
               ) : (
-                <Ctrl onClick={passAttendance} gold>📋 Pass attendance</Ctrl>
+                <Ctrl onClick={passAttendance} gold>Pass attendance</Ctrl>
               )}
             </>
           ) : (
             <Ctrl onClick={toggleHand} gold={!myHand} active={myHand}>
-              {myHand ? "✋ Lower hand" : "✋ Raise hand"}
+              {myHand ? "Lower hand" : "Raise hand"}
             </Ctrl>
           )}
 
@@ -259,14 +259,14 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
         </p>
         {isTeacher && raisedHands.length > 0 && (
           <div className="rounded-lg bg-gold/15 p-2 text-xs text-gold">
-            ✋ {raisedHands.map((p) => p.name || "Student").join(", ")}
+            {raisedHands.map((p) => p.name || "Student").join(", ")}
           </div>
         )}
         {isTeacher && (multiScreen.length > 0 || awayStudents.length > 0) && (
           <div className="rounded-lg bg-rust/15 p-2 text-xs text-rust">
-            ⚠ Integrity
-            {multiScreen.length > 0 && <div>🖥 {multiScreen.length} on multiple screens</div>}
-            {awayStudents.length > 0 && <div>👀 {awayStudents.length} away from screen</div>}
+            Integrity
+            {multiScreen.length > 0 && <div>{multiScreen.length} on multiple screens</div>}
+            {awayStudents.length > 0 && <div>{awayStudents.length} away from screen</div>}
           </div>
         )}
         {participants.map((p) => (
@@ -294,7 +294,7 @@ function Stage({ sessionId, role }: { sessionId: string; role: Role }) {
             {marked ? (
               <p className="mt-5 chip status-open mx-auto">✓ You&apos;re marked present</p>
             ) : (
-              <button onClick={markPresent} className="btn btn-gold mt-5 w-full py-2.5">I&apos;m present ✋</button>
+              <button onClick={markPresent} className="btn btn-gold mt-5 w-full py-2.5">I&apos;m present </button>
             )}
           </div>
         </div>
@@ -332,8 +332,8 @@ function PersonTile({
       </div>
       <div className="flex items-center justify-between gap-1 px-2 py-1 text-xs text-paper">
         <span className="flex items-center gap-1 truncate">
-          {p.attributes?.hand === "1" && <span>✋</span>}
-          {!p.isMicrophoneEnabled && <span className="text-paper/50">🔇</span>}
+          {p.attributes?.hand === "1" && <span className="text-gold">hand</span>}
+          {!p.isMicrophoneEnabled && <span className="text-[0.6rem] text-paper/50">muted</span>}
           <span className="truncate">{p.name || "Guest"}{host ? " · host" : ""}</span>
         </span>
         {canMute && p.isMicrophoneEnabled && (
@@ -343,8 +343,8 @@ function PersonTile({
       {showDetails && (
         <div className="flex flex-wrap items-center gap-1 px-2 pb-1.5 text-[0.62rem]">
           {matric && <span className="rounded bg-white/10 px-1.5 py-0.5 font-mono text-paper/80">{matric}</span>}
-          {multi && <span className="rounded bg-rust/25 px-1.5 py-0.5 text-paper">🖥 multi-screen</span>}
-          {away && <span className="rounded bg-rust/25 px-1.5 py-0.5 text-paper">👀 away</span>}
+          {multi && <span className="rounded bg-rust/25 px-1.5 py-0.5 text-paper">multi-screen</span>}
+          {away && <span className="rounded bg-rust/25 px-1.5 py-0.5 text-paper">away</span>}
           {leaves > 0 && <span className="rounded bg-white/10 px-1.5 py-0.5 text-paper/70">left {leaves}×</span>}
         </div>
       )}

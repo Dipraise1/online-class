@@ -77,7 +77,7 @@ export default function QuizLayer({ sessionId, isTeacher }: { sessionId: string;
           onClick={() => setOpen((v) => !v)}
           className="fixed bottom-4 right-4 z-40 rounded-full bg-gold px-4 py-2.5 text-sm font-semibold text-pine-900 shadow-lg hover:brightness-105"
         >
-          📋 Quiz / Poll
+          Quiz / Poll
         </button>
 
         {open && !activeId && (

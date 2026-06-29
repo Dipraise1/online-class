@@ -18,7 +18,7 @@ export default function CopyLink({ path, label = "Copy invite link" }: { path: s
       }}
       className="rounded-lg border border-line-2 px-2.5 py-1 text-xs font-medium text-ink transition-colors hover:bg-paper-2"
     >
-      {done ? "✓ Link copied" : `🔗 ${label}`}
+      {done ? "✓ Link copied" : `${label}`}
     </button>
   );
 }
